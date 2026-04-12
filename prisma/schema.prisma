@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Audience {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  contacts  Contact[]
+}
+
+model Contact {
+  id         String   @id @default(cuid())
+  phone      String
+  audienceId String
+  audience   Audience @relation(fields: [audienceId], references: [id])
+}
+model Campaign {
+  id             String   @id @default(cuid())
+  name           String?  @default("حملة بدون اسم")
+  status         String   @default("pending")
+  sentCount      Int      @default(0)
+  deliveredCount Int      @default(0)
+  failedCount    Int      @default(0)
+  createdAt      DateTime @default(now())
+}
