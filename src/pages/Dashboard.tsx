@@ -305,16 +305,18 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           ))}
         </nav>
 
-        {/* Logout */}
-<div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
-  <button
-    onClick={() => signOut({ callbackUrl: "/" })} 
-    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all"
-  >
-    <LogOut className="w-5 h-5" />
-    <span>تسجيل الخروج</span>
-  </button>
-</div>
+     {/* Logout */}
+     <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>تسجيل الخروج</span>
+          </button>
+        </div>
+      </aside> {/* 👈 القوس ده كان ناقص وهو اللي موقف الـ Build */}
+
       {/* Mobile Sidebar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
         <div className="flex justify-around p-2">
@@ -332,7 +334,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           ))}
         </div>
       </div>
-
       {/* Main Content */}
       <main className="flex-1 lg:mr-64 pb-20 lg:pb-0">
         {/* Top Header */}
