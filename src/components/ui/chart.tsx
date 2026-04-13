@@ -13,7 +13,8 @@ function ChartTooltipContent({
   nameKey,
   labelKey,
 }: any) {
-  const { config } = useChart()
+  // 👇 بدل useChart
+  const config = {} as any
 
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || !payload?.length) {
@@ -26,7 +27,7 @@ function ChartTooltipContent({
 
     const value =
       !labelKey && typeof label === "string"
-        ? config[label]?.label || label
+        ? config?.[label]?.label || label
         : itemConfig?.label
 
     if (labelFormatter) {
