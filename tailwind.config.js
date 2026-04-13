@@ -2,12 +2,13 @@
 module.exports = {
   darkMode: ["class"],
 
-  content: [
-    "./index.html",
-
-    // أهم سطر (بيغطي كل مشروع Next.js داخل src)
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+    content: [
+      "./index.html",
+      "./src/**/*.{js,ts,jsx,tsx,mdx}", // ده هيغطي كل حاجة جوه src بما فيها pages
+      "./src/pages/**/*.{js,ts,jsx,tsx,mdx}", // زيادة تأكيد على الفولدر اللي فيه ملفاتك
+      "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+      "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    ],
 
   theme: {
     extend: {
