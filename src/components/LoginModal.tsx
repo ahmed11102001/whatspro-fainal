@@ -37,24 +37,24 @@ export default function LoginModal({
     setIsLoading(true);
 
     const form = new FormData(e.currentTarget);
-
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
     const res = await signIn("credentials", {
       redirect: false,
-      email,
-      password,
+      email: email.trim().toLowerCase(),
+      password: password,
     });
 
     setIsLoading(false);
 
     if (res?.ok) {
-      onLogin?.();
+      if (onLogin) onLogin();
       onClose();
-      router.push("/Dashboard"); // ✅ هنا التعديل
+      router.push("/Dashboard");
+      router.refresh();
     } else {
-      alert("بيانات الدخول غلط أو المستخدم غير موجود");
+      alert("بيانات الدخول غير صحيحة أو الحساب غير موجود");
     }
   };
 
@@ -73,28 +73,32 @@ export default function LoginModal({
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, password }),
+        body: JSON.stringify({ 
+          name, 
+          email: email.trim().toLowerCase(), 
+          phone, 
+          password 
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Error");
+        throw new Error(data.error || "حدث خطأ أثناء التسجيل");
       }
 
       alert("تم إنشاء الحساب بنجاح 🎉");
 
-      // رجّع المستخدم لتسجيل الدخول
+      // الانتقال لتبويب تسجيل الدخول
       const loginTab = document.querySelector(
         '[data-value="login"]'
       ) as HTMLElement;
-
       loginTab?.click();
     } catch (err: any) {
       alert(err.message);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -116,43 +120,114 @@ export default function LoginModal({
             <TabsTrigger value="register">إنشاء حساب</TabsTrigger>
           </TabsList>
 
-          {/* LOGIN */}
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label>البريد الإلكتروني</Label>
-                <Input name="email" type="email" required />
+                <Label htmlFor="email">البريد الإلكتروني</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="pl-10"
+                    placeholder="name@example.com"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label>كلمة المرور</Label>
-                <Input name="password" type="password" required />
+                <Label htmlFor="password">كلمة المرور</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    className="pl-10"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
               </div>
 
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-green-500 text-white"
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-6 rounded-xl transition-all"
               >
-                {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+                {isLoading ? "جاري التحميل..." : "تسجيل الدخول"}
               </Button>
             </form>
           </TabsContent>
 
-          {/* REGISTER */}
           <TabsContent value="register">
             <form onSubmit={handleRegister} className="space-y-4 mt-4">
-              <Input name="name" placeholder="الاسم" required />
-              <Input name="reg-email" placeholder="الإيميل" required />
-              <Input name="phone" placeholder="رقم الهاتف" required />
-              <Input name="reg-password" type="password" placeholder="كلمة المرور" required />
+              <div className="space-y-2">
+                <Label htmlFor="name">الاسم بالكامل</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="name"
+                    name="name"
+                    className="pl-10"
+                    placeholder="أحمد محمد"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reg-email">البريد الإلكتروني</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="reg-email"
+                    name="reg-email"
+                    type="email"
+                    className="pl-10"
+                    placeholder="name@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">رقم الهاتف</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="phone"
+                    name="phone"
+                    className="pl-10"
+                    placeholder="010XXXXXXXX"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reg-password">كلمة المرور</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="reg-password"
+                    name="reg-password"
+                    type="password"
+                    className="pl-10"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
 
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-green-500 text-white"
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-6 rounded-xl transition-all"
               >
-                {isLoading ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
+                {isLoading ? "جاري الحفظ..." : "إنشاء حساب مجاني"}
               </Button>
             </form>
           </TabsContent>
