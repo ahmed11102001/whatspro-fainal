@@ -1,13 +1,13 @@
 import NextAuth from "next-auth";
+import type { NextAuthOptions } from "next-auth"; // ضفنا التايب ده عشان الخط الأحمر
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-const handler = NextAuth({
-  // ربط NextAuth مع قاعدة بيانات Neon عبر Prisma
+// 1. لازم نطلع الـ Options في متغير لوحده ونعمله export
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -16,29 +16,24 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // 1. التأكد أن المستخدم أدخل البيانات
         if (!credentials?.email || !credentials?.password) {
           throw new Error("الرجاء إدخال البريد الإلكتروني وكلمة المرور");
         }
 
-        // 2. البحث عن المستخدم في الداتابيز
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
-        // 3. لو المستخدم مش موجود
         if (!user || !user.password) {
           throw new Error("المستخدم غير موجود");
         }
 
-        // 4. التحقق من صحة كلمة المرور المشفرة
         const isValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isValid) {
           throw new Error("كلمة المرور غير صحيحة");
         }
 
-        // 5. لو كله تمام، رجّع بيانات المستخدم للجلسة (Session)
         return {
           id: user.id,
           name: user.name,
@@ -47,19 +42,31 @@ const handler = NextAuth({
       },
     }),
   ],
-
-  // استخدام JSON Web Tokens لتخزين الجلسة
   session: {
     strategy: "jwt",
   },
-
-  // تحديد صفحة اللوجن الخاصة بنا
   pages: {
-    signIn: "/", // أو "/login" حسب مسار صفحتك
+    signIn: "/", 
   },
-
-  // الكود السري للتشفير (الموجود في .env)
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        // @ts-ignore
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+// 2. الـ handler بياخد الـ authOptions
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
