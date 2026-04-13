@@ -1,3 +1,4 @@
+import { signOut } from "next-auth/react";
 import "@/app/globals.css";
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,7 @@ const recentCampaigns = [
 // Home Dashboard Content Component
 function HomeDashboard({ onCreateCampaign }: { onCreateCampaign: () => void }) {
   const user = {
-    name: 'محمد أحمد',
+    name: ' دولآ',
     package: 'الباقة الاحترافية',
     contactsCount: 2341,
     sentMessages: 4250,
@@ -305,17 +306,15 @@ export default function Dashboard({ onLogout }: DashboardProps) {
         </nav>
 
         {/* Logout */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
-          <button
-            onClick={onLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>تسجيل الخروج</span>
-          </button>
-        </div>
-      </aside>
-
+<div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+  <button
+    onClick={() => signOut({ callbackUrl: "/" })} 
+    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all"
+  >
+    <LogOut className="w-5 h-5" />
+    <span>تسجيل الخروج</span>
+  </button>
+</div>
       {/* Mobile Sidebar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
         <div className="flex justify-around p-2">
