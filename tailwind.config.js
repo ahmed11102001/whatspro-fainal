@@ -2,13 +2,11 @@
 module.exports = {
   darkMode: ["class"],
 
-    content: [
-      "./index.html",
-      "./src/**/*.{js,ts,jsx,tsx,mdx}", // ده هيغطي كل حاجة جوه src بما فيها pages
-      "./src/pages/**/*.{js,ts,jsx,tsx,mdx}", // زيادة تأكيد على الفولدر اللي فيه ملفاتك
-      "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-      "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}", // 👈 لازم المسار ده يكون موجود
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
 
   theme: {
     extend: {
