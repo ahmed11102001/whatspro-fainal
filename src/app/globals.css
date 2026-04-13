@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@source "../pages/**/*.{js,ts,jsx,tsx,mdx}"; /* 👈 السطر ده هو اللي هيخلي الألوان تظهر */
 
 @plugin "tailwindcss-animate";
 
