@@ -1,35 +1,36 @@
 "use client";
 
-import { useState } from 'react';
-import Navbar from '@/sections/Navbar';
-import Hero from '@/sections/Hero';
-import Features from '@/sections/Features';
-import HowItWorks from '@/sections/HowItWorks';
-import Pricing from '@/sections/Pricing';
-import Testimonials from '@/sections/Testimonials';
-import FAQ from '@/sections/FAQ';
-import Footer from '@/sections/Footer';
-import LoginModal from '@/components/LoginModal'; 
-import Dashboard from '@/pages/Dashboard';
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+import Navbar from "@/sections/Navbar";
+import Hero from "@/sections/Hero";
+import Features from "@/sections/Features";
+import HowItWorks from "@/sections/HowItWorks";
+import Pricing from "@/sections/Pricing";
+import Testimonials from "@/sections/Testimonials";
+import FAQ from "@/sections/FAQ";
+import Footer from "@/sections/Footer";
+import LoginModal from "@/components/LoginModal";
 
 export default function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+  useEffect(() => {
+    if (session) {
+      router.push("/Dashboard");
+    }
+  }, [session, router]);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-
-  // لو المستخدم مسجل دخول، اعرض الداشبورد
-  if (isLoggedIn) {
-    return <Dashboard onLogout={handleLogout} />;
+  if (status === "loading") {
+    return <div>جاري التحميل...</div>;
   }
 
-  // لو مش مسجل، اعرض اللاندنج بيج
+  if (session) return null;
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar onLoginClick={() => setIsLoginModalOpen(true)} />
@@ -40,11 +41,10 @@ export default function Home() {
       <Testimonials />
       <FAQ />
       <Footer />
-      
+
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
-        onLogin={handleLogin}
       />
     </div>
   );
